@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// 8방향에서 찾고자 하는 글자를 탐색, return 값은 bool이고 찾았다면 포인터를 이용해 찾은 글자의 좌표값(newx,newy)을 저장하자.
+bool search8Direction(vector<vector<char>> &array, char[] letter, int x, int y){
+	
+}
+// 재귀함수
+bool keepSearching(vector<vector<char>> &array, int find, int x, int y, wordSize){
+	if(find == 0) return false;
+	if(find == wordSize) return true;
+		
+	if(search8Direction(array,word[find],i,j))
+		keepSearching(array,find+1,*newx,*newy);
+	else
+		keepSearching(array,find-1,*newx,*newy);
+}
+vector<char> find_word(vector<vector<char>> &array, vector<char> &word){
+	int wordSize = word.size();
+	for(int i=0; i<5; i++)
+		for(int j=0; j<5; j++){
+			if (array[i][j] == word[0]){//첫번째 글자 찾았다.
+			
+					
+			}
+		}
+	
+	
+	
+	
+	/*bool hasWord(int y, int x, char[] word){
+	}*/	
+}
+
+
+int main(){
+	int c;
+	cin >> c;
+	
+	vector<vector<char>> array;
+	for(int i=0; i<c; i++){
+		for(int j=0; j<5; j++)
+			for(int k=0; k<5; k++)
+				cin >> array[j][k];
+		// 여기에 함수를 넣고 결과를 반환한다.
+	}
+}

@@ -1,0 +1,61 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+bool includePair(int pairNum, int n, int m, vector<int> currentPair, vector<vector<int>> arr);
+	
+	
+int main(){
+	
+	int testCase;
+	int n,m;
+	vector<vector<int>> arr;
+	
+	cin >> testCase;
+	cin >> n >> m;
+	for(int k = 0; k < testCase; k++){
+		
+		int retNum = 0;
+		
+		for(int i = 0; i < m; i++){
+			for(int j = 0; j < 2; j++){
+				cin >> arr[i][j]; 
+			}
+		}
+		
+		for(int p = 0; p < m - n/2 + 1; p++){
+			
+			vector<int> currentPair;
+			
+			if(includePair(p, n, m, currentPair, arr)) retNum++;
+			
+		}
+		
+		cout << retNum;
+		
+	}
+	
+	
+	
+}
+// 이 쌍이 포함될 수 있는가? pairNum : 판정할 쌍 / currentPair : 현재 조편성(기본값을 -1로 설정) 
+bool includePair(int pairNum, int n, int m, vector<int> currentPair, vector<vector<int>> arr){
+	
+	if(pairNum == m) return false; // <기저사례> 만약 판정할 쌍이 m과 같아진다면 결국 조편성을 짜지 못한 것이므로 false 반환. 조편성이 끝났다면 여기까지 오지 않음.
+	
+	// 이 쌍이 포함될 수 있는가?
+	for(int i = 0; i < 2; i++){
+		for(int j = 0; j < currentPair.size(); j++){
+			if(arr[pairNum][i] == currentPair[j]) return includePair(pairNum++, n, m, currentPair, arr); // 중복되는 숫자가 있으면 다음 pairNum 비교
+		}
+	}
+	// 포함 될 수 있다. 새로운 쌍을 추가
+	for(int i = 0; i < 2; i++){
+		currentPair.push_back(arr[pairNum][i]);
+	}
+	
+	if(currentPair.size() == n) return true; // <기저사례> 조편성을 끝냈다면 true 반환.
+	
+	includePair(pairNum++, n, m, currentPair, arr);
+	
+}

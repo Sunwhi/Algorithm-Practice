@@ -1,3 +1,5 @@
+<실패작1>
+
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -58,4 +60,88 @@ bool includePair(int pairNum, int n, int m, vector<int> currentPair, vector<vect
 	
 	includePair(pairNum++, n, m, currentPair, arr);
 	
+}
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+<실패작2>
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+bool includePair(int originP, int pairNum, int n, int m, vector<int> currentPair, vector<vector<int>> arr);
+	
+	
+int main(){
+	
+	int testCase;
+	int n,m;
+	
+	cin >> testCase;
+	
+	for(int k = 0; k < testCase; k++){
+		
+		cin >> n >> m;
+		
+		vector<vector<int>> arr;
+		int arrInput = 0;
+		int retNum = 0;
+		
+		// arr에 값 집어넣기 / 2차원 vector라서 arr에 값을 넣으려면 1차원 vector를 한번 거쳐야 함.
+		for(int i = 0; i < m; i++){
+			
+			vector<int> arrRow{};
+			
+			for(int j = 0; j < 2; j++){
+				
+				cin >> arrInput;
+				
+				arrRow.push_back(arrInput);
+				
+			}
+			
+			arr.push_back(arrRow);
+		}
+		
+		for(int p = 0; p <= m - n/2; p++){ // pairNum하나당 하나의 조합만 있는게 아니다! 
+			
+			vector<int> currentPair;
+			
+			if(includePair(p, p, n, m, currentPair, arr)){
+				retNum++;
+				cout << p;
+			} 
+			
+		}
+		
+		
+		cout << endl << retNum << endl;
+		
+	}
+	
+	
+	
+}
+// 이 쌍이 포함될 수 있는가? pairNum : 판정할 쌍 / currentPair : 현재 조편성
+bool includePair(int originP, int pairNum, int n, int m, vector<int> currentPair, vector<vector<int>> arr){
+	
+	if(currentPair.size() == n) return true; // <기저사례> 조편성을 끝냈다면 true 반환.
+	if(pairNum == m) return false; // <기저사례> 만약 판정할 쌍이 m과 같아진다면 결국 조편성을 짜지 못한 것이므로 false 반환. 조편성이 끝났다면 여기까지 오지 않음.
+	
+	// 이 쌍이 포함될 수 없다.
+	for(int i = 0; i < 2; i++){
+		for(int j = 0; j < currentPair.size(); j++){
+			if(arr[pairNum][i] == currentPair[j]) return includePair(originP, ++pairNum, n, m, currentPair, arr); // 포함되지 않는다면.
+		}
+	}
+	
+	// 포함 될 수 있다. 새로운 쌍을 추가, 첫번째 쌍은 무조건 여기로 옴
+	for(int i = 0; i < 2; i++){
+		currentPair.push_back(arr[pairNum][i]);
+	}
+	
+	if(includePair(originP, originP + 1, n, m, currentPair, arr)) return true;
+	
+	return false;
 }

@@ -1,3 +1,93 @@
+<성공>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+
+//a를 matchList에서 찾아냄.
+bool searchA(vector<int> &matchList, int a){
+	for(int i=0; i<matchList.size(); i++){
+		if(matchList[i] == a) return true;
+	}
+	return false;
+}
+
+int findPair(vector<int> &numList, bool pair[][10], vector<int> &matchList, int startNum, int n, int pairCount, int* ret){
+	//cout << *ret << endl;
+	if(matchList.size() == n) {
+		//cout << "완성된 짝입니다." << endl;
+		//cout << "완성된 size" << matchList.size() << endl;
+		//for(int i=0; i<n; i++) cout << matchList[i] << endl;
+		return 1;
+	}
+	if(startNum == n-1) return 0;
+	
+	//이 줄까지 왔다는 것은 마지막 경우의 수가 아니라는 뜻
+	if(searchA(matchList, startNum)){
+		return findPair(numList, pair, matchList, startNum + 1, n, pairCount, ret); ///
+		//return *ret;
+	} //startNum이 matchList에 존재하는 경우
+	
+	for(int i=(startNum + 1); i<n; i++){
+		
+		if(pair[startNum][i]){
+			if(searchA(matchList, i)) continue; // i가 matchList에 존재하는 경우
+			
+			matchList.push_back(startNum);
+			matchList.push_back(i);
+			//cout << "push_back" << startNum << ' ' << i << endl;
+			//for(int i=0; i<n; i++) cout << matchList[i] << endl;
+			*ret += findPair(numList, pair, matchList, startNum + 1, n, ++pairCount, ret); ///
+			
+			//cout << "back" << matchList.back();
+			matchList.pop_back();
+			matchList.pop_back();
+			//cout << "size" <<  matchList.size() << endl;
+			//cout << "pop_back" << startNum << ' ' << i << endl;
+			//for(int i=0; i<n; i++) cout << matchList[i] << endl;
+		}
+
+		
+	}
+	//이 줄까지 왔다는 것은 i의 비교범위가 넘어섰다 = 경우의 수 끝
+	return 0;
+	//return findPair(numList, pair, matchList, ++startNum, n, pairCount, ret);
+}
+int main(){
+	
+	int testCase;
+	int n,m;
+	
+	cin >> testCase;
+	
+	for(int k = 0; k < testCase; k++){
+		
+		cin >> n >> m;
+		
+		bool pair[10][10] = {0,};
+		//pair 배열에 짝 기록하기 / 행 숫자 < 열 숫자
+		for(int i=0; i<m; i++){
+			int a,b;
+			cin >> a >> b;
+			if(a<b) pair[a][b] = true;
+			else pair[b][a] = true;
+		}
+		
+		int ret = 0;
+		vector<int> matchList;
+		vector<int> numList;
+		for(int i=0; i<n; i++) numList.push_back(i);
+		
+		findPair(numList, pair, matchList, 0, n, 0, &ret);
+		
+		cout << ret << endl;
+	}
+	
+	
+}
+
+
 <실패작1>
 
 #include <iostream>

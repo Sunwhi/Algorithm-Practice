@@ -1,0 +1,111 @@
+<실패> 작은 값만 가정
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+const int lastNum = 0;
+
+void deleteCity(int delCityNum, vector<int> &cityList)
+{
+	for(int i=0; i<cityList.size(); i++)
+	{
+		if(delCityNum == cityList[i]) cityList.erase(cityList.begin() + i);
+	}
+}
+
+void insertCity(int insCityNum, vector<int> &cityList)
+{
+	if(cityList.size() == 0) {
+		cityList.push_back(insCityNum);
+		return;
+	}
+	for(int i=0; i<cityList.size(); i++)
+	{
+		if(insCityNum < cityList[i]) {
+			cityList.insert(cityList.begin() + i,insCityNum);
+				break;
+		}
+		if(i == cityList.size()){
+			cityList.push_back(insCityNum);
+				break;
+		}
+	}
+}
+// 재귀함수와 min함수를 이용한 배열 안에서 최소값 구하기.
+int findMin(int n, vector<int> &sumList)
+{
+	if(n==sumList.size()-1) return sumList[n]; // 끝까지 도달하면 그 값을 반환
+	return min(sumList[n],findMin(n+1,sumList));
+}
+
+// 현재 도시에서 나아갈 수 있는 모든 경우의 수를 계산하고 더하여 sumList에 저장하고 그 중 최솟값을 반환한다.
+int citySum(int cd[][10],vector<int> &cityList,int curCity,int sum)
+{
+	vector<int> sumList;
+	int return0 = cd[curCity][0];
+	
+	deleteCity(curCity,cityList); // 도시 목록에서 현재 도시를 없애고 시작한다.
+
+	if(cityList.size() == 0) {
+		return sum + return0;
+	}
+	
+	for(int i=0; i<cityList.size(); i++) // 현재 도시와 이어질 수 있는 모든 경로를 탐색함.
+	{ 
+		int nextCity = cityList[i];
+		
+		sum += cd[curCity][nextCity];
+		
+		sumList.push_back(citySum(cd,cityList,nextCity,sum));
+		
+		sum -= cd[curCity][nextCity];
+		insertCity(nextCity,cityList); 
+		cout << "insert : "<< nextCity<<endl;
+	}
+	cout <<"cityList : ";
+	for(int i=0; i<cityList.size(); i++){
+		cout << cityList[i] << " " << endl;
+	}
+	cout << "size " <<cityList.size() << endl;
+	
+	int minSum = 0;
+	minSum = findMin(0,sumList);
+	
+	return minSum;
+}
+
+
+int main()
+{
+	int cityDistance[10][10];
+	vector<int> cityList;
+	int cityNum = 0;
+	
+	cin >> cityNum;
+	
+	for(int i=0; i<cityNum; i++){
+		for(int j=0; j<cityNum; j++){
+			int d = 0;
+			cin >> d;
+			cityDistance[i][j] = d;
+		}
+	}
+	for(int i=0; i<cityNum; i++){
+		cityList.push_back(i);
+	}
+	
+	int ret = 0;
+	ret = citySum(cityDistance,cityList,0,0); // city 0에서 항상 출발
+	cout << ret << endl;
+	return 0;
+}
+
+/*
+4
+0 10 15 20
+10 0 7 5
+15 7 0 12
+20 5 12 0
+*/

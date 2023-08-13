@@ -1,0 +1,174 @@
+<FAIL>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+//int fenceLocation[10000][20000];
+//vector<vector<int>> fenceLocation(10001); // Index
+//vector<int> smallerFenceLoc; // Index
+int maxArea = 0;
+
+void fence(vector<int>& fenceHeight,vector<int>& heightList,vector<vector<int>>& fenceLocation, vector<int>& smallerFenceLoc){
+	
+	int minHeight = heightList[0]; // 남은 울타리들 중 가장 작은 값
+	int maxWidth = 0;
+	if(smallerFenceLoc.empty()) maxArea = (minHeight * fenceHeight.size()); // 첫번째 경우, 울타리들 중 가장 작은 높이라면 넓이는 (처음부터 끝까지 * 높이)
+	else{
+		//fenceLocation에서 현재 minHeight의 index들을 하나하나 넣어보면서 fenceLocation 사이사이 위치를 찾는다.
+		//그리고 넓이 계산.
+		for(int j=0; j<fenceLocation[minHeight].size(); j++){
+			int area;
+			int idx = fenceLocation[minHeight][j]; 
+			
+			if(idx < smallerFenceLoc.front()){
+				int width = smallerFenceLoc.front();
+				if(maxWidth < width) maxWidth = width;
+				continue;
+			}
+			if(smallerFenceLoc.back() < idx){
+				int width = fenceHeight.size() - smallerFenceLoc.back() - 1;
+				if(maxWidth < width) maxWidth = width;
+				continue;
+			}
+			
+			int first = 0;
+			int end = smallerFenceLoc.size() - 1;
+			int mid;
+			while(1){
+				mid = (first + end) / 2;
+				if(smallerFenceLoc[mid] >= idx) end = mid;
+				else first = mid;
+				
+				if(first + 1 == end) break;
+			}
+			int width = smallerFenceLoc[end] - smallerFenceLoc[first] - 1;
+			if(maxWidth < width) maxWidth = width;
+			
+		}
+		int area = maxWidth * minHeight;
+		if(maxArea < area) maxArea = area;
+	}	
+	
+	// minHeight의 위치를 smallerFenceLoc에 저장한다.
+	for(int i=0; i<fenceLocation[minHeight].size(); i++){   
+		smallerFenceLoc.push_back(fenceLocation[minHeight][i]);
+	}
+	sort(smallerFenceLoc.begin(),smallerFenceLoc.end());
+	
+	// minHeight를 현재 값 다음으로 작은 값으로 설정.
+	while(1){
+		if(heightList[0] == minHeight) {
+			heightList.erase(heightList.begin());
+			
+			if(heightList.empty()) return; // 끝까지 모두 탐색 완료.
+			
+			continue;
+		}
+		else break;
+	}
+	
+	
+	fence(fenceHeight, heightList, fenceLocation, smallerFenceLoc);
+	
+}
+
+int main(){
+	int c = 0;
+	cin >> c;
+	for(int i=0; i<c; i++){
+		int n = 0;
+		vector<int> fenceHeight; // 기본 값
+		vector<int> heightList; // 어떤 높이의 울타리들이 있는가? 오름차순으로 정렬
+		vector<vector<int>> fenceLocation(10001); // Index
+		vector<int> smallerFenceLoc; // Index
+		
+		cin >> n;
+		for(int j=0; j<n; j++){
+			int h;
+			cin >> h;
+			
+			fenceHeight.push_back(h);
+			heightList.push_back(h);
+			
+			fenceLocation[h].push_back(j); // fenceLocation[10][2] 높이가 10인 울타리가 2번째로 나타나는 위치.
+		
+		}
+		sort(heightList.begin(),heightList.end()); //11122355569 10 11 11...
+		
+		fence(fenceHeight,heightList,fenceLocation,smallerFenceLoc);
+		
+		cout << maxArea << endl;
+		
+		//fenceLocation.clear();
+		//smallerFenceLoc.clear();
+		maxArea = 0;
+	}
+}
+/*
+3
+7
+7 1 5 9 6 7 3
+7
+1 4 4 4 4 1 1
+4
+1 8 2 2
+
+1
+4
+1 8 2 2
+
+4
+3
+1 2 3 
+5
+1 2 3 4 5
+2 
+1 5
+6
+1 3 5 4 7 6
+*/
+/*
+int minHeight = heightList[0]; // 남은 울타리들 중 가장 작은 값
+	int maxWidth = 0;
+	if(smallerFenceLoc.empty()) maxArea = (minHeight * fenceHeight.size()); // 첫번째 경우, 울타리들 중 가장 작은 높이라면 넓이는 (처음부터 끝까지 * 높이)
+	else{
+		//fenceLocation에서 현재 minHeight의 index들을 하나하나 넣어보면서 fenceLocation 사이사이 위치를 찾는다.
+		//그리고 넓이 계산.
+		for(int j=0; j<fenceLocation[minHeight].size(); j++){
+			int area;
+			int idx = fenceLocation[minHeight][j]; 
+			
+			if(idx < smallerFenceLoc.front()){
+				area = minHeight * (smallerFenceLoc.front());
+				if(area > maxArea) maxArea = area;
+				continue;
+			}
+			if(smallerFenceLoc.back() < idx){
+				area = minHeight * (fenceHeight.size() - smallerFenceLoc.back() - 1);
+				if(area > maxArea) maxArea = area;
+				continue;
+			}
+			for(int i=0; i<smallerFenceLoc.size()-1; i++){
+				if((smallerFenceLoc[i] < idx) && (idx < smallerFenceLoc[i+1])){
+					// 원하는 위치를 찾았으므로 이제 양 옆 값들을 가로길이로 하는 넓이를 계산해서 maxArea와 비교하면 됨.
+					area = minHeight * ((smallerFenceLoc[i+1] - smallerFenceLoc[i]) - 1);
+					if(area > maxArea) maxArea = area;
+					break; //***
+				}
+				else continue;
+			}
+			
+		}
+	}
+*/
+/*for(int i=0; i<smallerFenceLoc.size()-1; i++){ // 분할 정복으로 찾아보자.
+				if((smallerFenceLoc[i] < idx) && (idx < smallerFenceLoc[i+1])){
+					// 원하는 위치를 찾았으므로 이제 양 옆 값들을 가로길이로 하는 넓이를 계산해서 maxArea와 비교하면 됨.
+					int width = (smallerFenceLoc[i+1] - smallerFenceLoc[i]) - 1;
+					if(maxWidth < width) maxWidth = width;
+					break; //***
+				}
+				else continue;
+			}*/

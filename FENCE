@@ -172,3 +172,71 @@ int minHeight = heightList[0]; // 남은 울타리들 중 가장 작은 값
 				}
 				else continue;
 			}*/
+
+<성공>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+
+int fence(vector<int>& h, int left, int right)
+{
+
+	int ret = 0;
+	if(left == right) return h[left];
+	
+	int mid = (left+right)/2;
+	
+	ret = max(fence(h,left,mid),fence(h,mid+1,right));
+	
+	int height = min(h[mid],h[mid+1]);
+	ret = max(ret,height * 2);
+	
+	int lo = mid;
+	int hi = mid+1;
+	
+	while(left < lo || hi < right)
+	{
+		if(hi < right && (left == lo || h[lo-1] < h[hi+1]))
+		{
+			++hi;
+			height = min(height,h[hi]);
+			ret = max(ret,height * (hi - lo + 1));
+		}
+		else
+		{
+			--lo;
+			height = min(height,h[lo]);
+			ret = max(ret,height * (hi - lo + 1));
+		}
+	}
+	
+	return ret;
+	
+}
+
+
+int main()
+{
+	int c = 0;
+	cin >> c;
+	for(int i=0; i<c; i++)
+	{
+		int n = 0;
+		vector<int> fenHeight; // 기본 값
+		cin >> n;
+		for(int j=0; j<n; j++)
+		{
+			int h;
+			cin >> h;
+			
+			fenHeight.push_back(h);
+		}
+		
+		int ret = fence(fenHeight,0,fenHeight.size()-1);
+		cout << ret << endl;
+	}
+}

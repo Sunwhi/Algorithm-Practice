@@ -116,3 +116,138 @@ int main()
 	}
 	
 }
+
+<책 풀이 but 시간초과> , <일반적인 카라츠바 앍고리즘>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+
+using namespace std;
+// 모든 vector는 숫자를 1230 -> {0 3 2 1}의 형태로 저장한다.
+
+vector<int> multiply(vector<int>& a, vector<int>& b)
+{
+	vector<int> c(a.size() + b.size() + 1, 0);
+	for(int i=0; i<a.size(); ++i)
+		for(int j=0; j<b.size(); ++j)
+			c[i+j] += a[i] * b[j];
+	return c;
+}
+//a += b*(10^k)를 구현한다. 
+void addTo(vector<int>& a, vector<int>& b, int k)
+{
+	if(a.size() <= b.size())
+	{
+		for(int i=0; i<b.size()-a.size(); i++)
+			a.push_back(0);
+	}
+	else
+	{
+		for(int i=0; i<a.size()-b.size(); i++)
+			b.push_back(0);
+	}
+	a.push_back(0);
+	
+	//b에 10의 k승을 곱한다
+	for(int i=0; i<k; i++)
+	{
+		b.insert(b.begin(),0);
+	}
+	
+	for(int i=k; i<b.size(); i++)
+	{
+		a[i] += b[i];
+		int temp = a[i];
+		if(a[i] > 9) a[i] = temp%10, a[i+1] += temp/10;
+	}
+	
+	if(a[a.back()] == 0) a.pop_back();
+}
+// a -= b를 구현한다. a>=b
+// a 뒤에 0붙어있음 주의
+void subFrom(vector<int>& a, vector<int>& b)
+{
+	// newB에 000123과 같이 복사
+	/*vector<int> newB(a.size());
+	for(int i=0; i<a.size(); i++)
+	{
+		if(i<b.size()-a.size()) newB.push_back(0);
+		else newB.push_back(b.size() - i + 1);
+	}*/
+	for(int i=0; i<a.size()-b.size(); i++)
+		b.push_back(0);
+	
+	for(int i=0; i<a.size(); i++)
+	{
+		if(a[i]>=b[i]) a[i] -= b[i];
+		else
+		{
+			int n = a[i]-b[i];
+			a[i] = 10 + n;
+			a[i+1] -= 1;
+		}
+	}
+	
+	for(int i=0; i<a.size()-b.size(); i++)
+		b.pop_back();
+}
+vector<int> karatsuba(vector<int>& a, vector<int>& b)
+{
+	int an = a.size(), bn = b.size();
+	if(an<bn) return karatsuba(b,a);
+	if(an==0 || bn==0) return vector<int>();
+	if(an<=100) return multiply(a,b);
+	int half = an/2;
+	
+	vector<int> a0(a.begin(), a.begin() + half);
+	vector<int> a1(a.begin() + half, a.end());
+	vector<int> b0(b.begin(), b.begin() + min<int>(b.size(),half));
+	vector<int> b1(b.begin() + min<int>(b.size(), half), b.end());
+	
+	vector<int> z2 = karatsuba(a1,b1);
+	vector<int> z0 = karatsuba(a0,b0);
+	addTo(a0,a1,0); addTo(b0,b1,0);
+	vector<int> z1 = karatsuba(a0,b0);
+	subFrom(z1,z0);
+	subFrom(z1,z2);
+	
+	vector<int> ret;
+	addTo(ret, z0, 0);
+	addTo(ret, z1, half);
+	addTo(ret, z2, half + half);
+	return ret;
+}
+
+int hugs(const string& members, const string& fans)
+{
+	int N = members.size(), M = fans.size();
+	vector<int> A(N), B(M);
+	for(int i=0; i<N; ++i) A[i] = (members[i] == 'M');
+	for(int i=0; i<M; ++i) B[M-1-i] = (fans[i] == 'M');
+	
+	vector<int> C = karatsuba(A,B);
+	int allHugs = 0;
+	for(int i=N-1; i<M; ++i)
+		if(C[i] == 0)
+			++allHugs;
+	return allHugs;
+}
+
+int main()
+{
+	int c;
+	cin >> c;
+	for(int i=0; i<c; i++)
+	{
+		string members;
+		string fans;
+		cin >> members;
+		cin >> fans;
+
+		int answ = hugs(members, fans);
+		cout << answ << endl;
+	}
+	
+}

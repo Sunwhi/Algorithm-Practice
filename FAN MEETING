@@ -1,0 +1,118 @@
+<뇌절 포기>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+// 분할정복으로 mem에 M혹은 F이 n번째 인덱스에 존재하는지 탐색
+int findNum(vector<int>& memM, int first, int end, int n)
+{
+	int mid = (first + end) / 2;
+	// 기저사례
+	if(memM[mid] == n) return 1;
+	if(end == first) return 0;
+	if(end == first + 1) return 0;
+	
+	if(memM[mid] > n) return findNum(memM, first, mid, n);
+	else return findNum(memM, mid, end, n);
+}
+int nextNumIdx(vector<int>& fanM, int first, int end, int n)
+{
+	int mid = (first + end) / 2;
+	if(end = first + 1) return end;
+	if(fanM[mid] > n) return nextNumIdx(fanM, first, mid, n);
+	else return nextNumIdx(fanM, mid, end, n);
+}
+
+
+
+
+int FanMeetingM(string& mem, string& fan, vector<int>& memM)
+{
+	//멤버가 전부 다 F일때
+	if(memM.empty()) return fan.length() - mem.length() + 1;
+	
+	 vector<int> finalM; // 마지막 개수 세기 위한 
+	int ret = 0;
+	// fan에서 M과 F의 위치를 저장, 이때 mem의 가장 첫번째 M을 기점으로 위치를 센다.
+	int mFirstM = memM[0]; // mem에서 가장 먼저 나오는 M의 인덱스 , 기준이다.
+	vector<int> fanM;
+	vector<int> fanF;
+	for(int i=mFirstM; i<fan.length(); i++) // 고민
+	{
+		int val = i-mFirstM;
+		if(fan[i] == 'M') fanM.push_back(val), finalM.push_back(val);	
+		else fanF.push_back(val);
+	}
+	
+	// 팬이 전부 다 F일때
+	if(fanM.empty()) return fan.length() - mem.length() + 1;
+	
+	//memM의 인덱스들을 기준에 맞춘다.
+	for(int i=0; i<memM.size(); i++)
+	{
+		memM[i] -= mFirstM;
+	}
+	for(int i=0; i<fanF.size(); i++)
+	{
+		int blankM = fanF[i];
+		int start = nextNumIdx(fanM, 0, fanM.size()-1, blankM);
+		if(fanF[i] > (fan.length() - mem.length() + mFirstM)) break; // 한계 넘어가는 숫자부터 컷
+		
+		for(int j=start; j<fanM.size(); j++)
+		{
+			if(findNum(memM,0,mem.length()-1,fanM[j]-blankM)) 
+			{
+				finalM.push_back(blankM);
+				break;
+			}
+		}
+	}
+	
+	
+	ret = fan.length() - mem.length() + 1; // 전부 짝 짓는 모든 경우의 수(포옹 여부 x)
+	int minus = finalM.size();
+	for(int i=0; i<finalM.size(); i++)
+	{
+		if(finalM[i] > fan.length() - mem.length() - mFirstM) --minus;
+	}
+	ret -= minus;
+	return ret;
+}
+/*int FanMeetingF(string& mem, string& fan, vector<int>& memF)
+{
+	
+}*/
+int main()
+{
+	int c;
+	cin >> c;
+	for(int i=0; i<c; i++)
+	{
+		int result = 0;
+		string mem;
+		string fan;
+		cin >> mem;
+		cin >> fan;
+
+		//mem에서 M와 F의 위치를 저장
+		vector<int> memM;
+		vector<int> memF;
+		
+		for(int j=0; j<mem.length(); j++)
+		{
+			if(mem[j] == 'M') memM.push_back(j);
+			else memF.push_back(j);
+		}
+
+		
+		result = FanMeetingM(mem,fan,memM);
+		//if(fanMNum >= fanFNum) result = FanMeetingM(mem,fan,memM);
+		//else result = FanMeetingF();
+		if(result<0) result = 0;
+		cout << result << endl;
+	}
+	
+}

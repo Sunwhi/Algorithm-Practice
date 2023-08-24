@@ -251,3 +251,49 @@ int main()
 	}
 	
 }
+
+<카라츠바 알고리즘 마지막 발악>
+//a += b*(10^k)를 구현한다. 
+void addTo(vector<int>& a, vector<int>& b, int k)
+{	
+	//b에 10의 k승을 곱한다
+	for(int i=0; i<k; i++)
+	{
+		b.insert(b.begin(),0);
+	}
+	
+	
+	int rep = max(a.size(),b.size());
+	for(int i=k; i<rep; i++)
+	{
+		if(i+1>=a.size()) a.push_back(0);
+		if(i+1>=b.size()) b.push_back(0);
+		a[i] += b[i];
+		int temp = a[i];
+		if(a[i] > 9) a[i] = temp%10, a[i+1] += temp/10;
+	}
+	
+	if(a[a.back()] == 0) a.pop_back();
+	if(b[b.back()] == 0) b.pop_back();
+}
+// a -= b를 구현한다. a>=b
+// a 뒤에 0붙어있음 주의
+void subFrom(vector<int>& a, vector<int>& b)
+{
+	for(int i=0; i<a.size()-b.size(); i++)
+		b.push_back(0);
+	
+	for(int i=0; i<a.size(); i++)
+	{
+		if(a[i]>=b[i]) a[i] -= b[i];
+		else
+		{
+			int n = a[i]-b[i];
+			a[i] = 10 + n;
+			a[i+1] -= 1;
+		}
+	}
+	
+	for(int i=0; i<a.size()-b.size(); i++)
+		b.pop_back();
+}

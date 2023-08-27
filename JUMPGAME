@@ -45,3 +45,48 @@ int main()
 	}
 	
 }
+
+<백준 : 점프>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+
+using namespace std;
+long long cache[100][100];
+
+long long sol(int arr[][100],int n,int x,int y)
+{
+	//기저 사례
+	if((x >= n) || (y >= n)) return 0;
+	if((x == n-1) && (y == n-1)) return 1;
+	if(arr[x][y] == 0) return 0;
+	
+	long long& ret = cache[x][y];
+	if(ret != -1) return ret;
+	
+	int rightX = x + arr[x][y];
+	int rightY = y;
+	int downX = x;
+	int downY = y + arr[x][y];
+	ret = sol(arr,n,rightX,rightY) + sol(arr,n,downX,downY);
+	return ret;
+}
+
+int main()
+{
+
+	int n;
+	cin >> n;
+	int arr[100][100];
+	for(int i=0; i<n; i++)
+		for(int j=0; j<n; j++)
+			cin >> arr[i][j];
+	memset(cache,-1,sizeof(cache));
+		
+	cout << sol(arr,n,0,0);
+	
+	
+}

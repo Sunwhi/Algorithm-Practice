@@ -57,3 +57,62 @@ int main()
 		cout << Lis(seq,ll)<< endl;
 	}
 }
+
+:11053번:
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+
+using namespace std;
+
+int Lis(vector<int>& seq, vector<int>& ll)
+{
+	for(int i=0; i<seq.size(); i++)
+	{
+		int point = seq.size() - 1 - i; // 끝에서부터 접근
+		if(i == 0) {ll[point] = 1; continue;}
+		int longestIdx = 0;
+		int max = 0;
+		
+		for(int j=point+1; j<seq.size(); j++)
+		{
+			if(ll[j] > max && seq[point] < seq[j])
+			{
+				max = ll[j];
+				longestIdx = j;
+			}
+			
+		}
+		ll[point] = max + 1;
+	}
+	
+	int max2=0; 
+	for(int i=0; i<seq.size(); i++)
+	{
+		if(ll[i] > max2) max2 = ll[i]; 
+	}
+	return max2;
+}
+
+int main()
+{
+
+	vector<int> seq;
+	vector<int> ll(1000,1);
+	
+	int n;
+	cin >> n;
+	for(int j=0; j<n; j++)
+	{
+		int s;
+		cin >> s;
+		seq.push_back(s);
+	}
+	
+	cout << Lis(seq,ll)<< endl;
+	
+}

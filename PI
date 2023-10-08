@@ -1,0 +1,103 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+int cache[10000];
+vector<int> pi;
+
+int level(int dgt, int cut)
+{
+	// Level 1 다 같다
+	for(int i=0; i<cut-1; i++)
+	{
+		if(pi[dgt+i] != pi[dgt+i+1]) break;
+		if(i == cut-2) return 1;
+	}
+	
+	//Level 2 1씩 증가 감소
+	for(int i=0; i<cut-1; i++)
+	{
+		if(pi[dgt] < pi[dgt+1])
+			if(pi[dgt+i]+1 != pi[dgt+i+1]) break;
+		if(pi[dgt] > pi[dgt+1])
+			if(pi[dgt+i]-1 != pi[dgt+i+1]) break;
+		if(pi[dgt] == pi[dgt+1]) break;
+		
+		if(i == cut-2) return 2;
+	}
+	
+	//Level 4
+	if(cut == 3)
+	{
+		if(pi[dgt] == pi[dgt+2]) return 4;
+	}
+	else if(cut == 4)
+	{
+		if(pi[dgt] == pi[dgt+2] && pi[dgt+1] == pi[dgt+3]) return 4;
+	}
+	else if(cut == 5);
+	{
+		if(pi[dgt] == pi[dgt+4] && pi[dgt] == pi[dgt+2] && pi[dgt+1] == pi[dgt+3]) return 4;
+	}
+	
+	//Level 5
+	int diff = pi[dgt] - pi[dgt+1];
+	for(int i=0; i<cut-1; i++)
+	{
+		if(pi[dgt+i]-pi[dgt+i+1] != diff) break;
+		if(i == cut-2) return 5;
+	}
+	
+	//Level 10
+	return 10;
+	
+}
+
+// 해당 자리에서 가장 난이도가 낮은 조합의 난이도를 반환한다. 앞에 자리는 상관없다.
+int piLevel(int dgt)
+{
+	int &ret = cache[dgt];
+	if(ret != -1) return ret;
+	
+	int leftDgt = pi.size() - dgt;
+	if(leftDgt == 0) return 0;
+	else if(leftDgt < 3) return 100000;
+	
+	int ret3 = level(dgt,3) + piLevel(dgt+3);
+	int ret4 = level(dgt,4) + piLevel(dgt+4);
+	int ret5 = level(dgt,5) + piLevel(dgt+5);
+	
+	int temp = min(ret3,ret4);
+	ret = min(temp,ret5);
+	return ret;
+}
+
+int main()
+{
+	int c;
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{
+		string s;
+		cin >> s;
+		
+		for(int j=0; j<s.size(); j++)
+		{
+			pi.push_back(s[j]-'0');
+		}
+		
+		memset(cache,-1,sizeof(cache));
+		
+		int ret = piLevel(0);
+		//cout << "****************";
+		cout << ret << endl;
+		
+		pi.clear();
+	}
+}

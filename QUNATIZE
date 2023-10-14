@@ -1,0 +1,79 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+int cache[100][10];
+vector<int> seq;
+int n, s;
+const int INF = 987654321;
+
+int cal(int start, int end)
+{
+	double sum; //??? int에서 double로 바꿨는다ㅔ
+	double average;
+	int result = 0;
+	
+	for(int i=0; i<=end-start; i++)
+	{
+		sum += seq[start+i];
+	}
+	
+	average = (sum) / (end-start+1); // 괄호를 씌웠을 분인데
+	average = round(average);
+	
+	for(int i=0; i<=end-start; i++)
+	{
+		result += (seq[start+i] - average)*(seq[start+i] - average);
+	}
+	
+	return result;
+}
+
+int quantize(int from, int parts)
+{
+	int &ret = cache[from][parts];
+	if(ret != -1) return ret;
+	// 기저사례 잘 입력했더니
+	if(parts == 0 && from <= n-1) return INF;
+	//if(parts == 0 && from == n) return 0;
+	//if(parts != 0 && from == n) return 0; // 최대 S개의 구간이므로 꼭 parts가 0이어야만 되는 것이 아니다. 따라서 return INF 아님.
+	if(from == n) return 0;
+	ret = INF;
+	
+	for(int i=0; i<n-from; i++)
+	{
+		ret = min(ret, cal(from,from+i) + quantize(from+i+1,parts-1));
+	}
+	
+	return ret;
+}
+
+int main()
+{
+	
+	int ret;
+	int c;
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{
+		memset(cache,-1,sizeof(cache));
+		cin >> n >> s;
+		for(int j=0; j<n; j++)
+		{
+			int a;
+			cin >> a;
+			seq.push_back(a);
+		}
+		sort(seq.begin(),seq.end());
+		
+		ret = quantize(0,s);
+		cout << ret << endl;
+		seq.clear();
+	}
+}

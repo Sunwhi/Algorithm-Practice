@@ -1,0 +1,43 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+long long cache[101];
+const long long m = 1000000007;
+//가로의 길이가 n일때 나올 수 있는 모든 경우의 수
+long long tiling(int n)
+{
+	if(n < 0) return 0;
+	if(n == 0) return 1;
+	
+	long long &ret = cache[n];
+	if(ret != -1) return ret;
+	
+	ret = (tiling(n-1)) % m + (tiling(n-2)) % m;
+	
+	return ret;
+}
+
+int main()
+{
+	long long ret;
+	int c;
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{	
+		
+		memset(cache,-1,sizeof(cache));
+		int n;
+		cin >> n;
+		
+		ret = tiling(n);
+		ret = ret % m;
+		cout << ret << endl;
+	}
+}

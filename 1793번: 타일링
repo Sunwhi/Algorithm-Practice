@@ -1,0 +1,104 @@
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+string cache[251] = {"1"};  //초기화된 값이 "0"이 아니라 ""인듯
+
+string tiling(int n)
+{
+	if(n < 0) return "0";
+	if(n == 0) return "1";
+	
+	string &ret = cache[n];
+	if(ret != "") return ret; // ret != 0은 안된다.
+	
+	string a = tiling(n-1); 
+	string b = tiling(n-2);
+	string c = tiling(n-2);
+	int size = max(a.size(),b.size()); 
+	
+	for(int i=0; i<size; i++)
+	{
+		int s; //자릿수 합
+		int as, bs, cs;
+		if(a[i]==0) as = 0;
+		else as = a[i]-'0';
+		if(b[i]==0) bs = 0;
+		else bs = b[i]-'0';
+		if(c[i]==0) cs = 0;
+		else cs = c[i]-'0';
+		s = as + bs + cs; //(a[i]-'0') + (b[i]-'0') + (c[i]-'0'); a[i]b[]c[]가 ""일때를 생각못함.
+		/*if(n==5)
+		{
+			cout << "a"<<a[i] - '0' << endl;
+			cout <<"b"<< b[i] - '0' << endl;
+			cout <<"c"<< c[i] - '0' << endl;
+			cout <<"s"<< s << endl;
+		}*/
+		int k; // 일의 자릿수
+		if(ret[i] == 0) k = s%10; // 0은 아스키코드로 NULL 따라서 ""과 같다.가 아닌듯
+		else // 기존에 있던 올림수와 더해서 새롭게 구해야 한다.
+		{
+			s += ret[i] - '0';
+			k = s%10;
+		}
+		int up = s/10;
+		if(ret[i] != 0) //앞에서 반올림된 값이 있을 때
+		{
+			if(up>=1)
+			{
+				ret.pop_back();
+				ret.push_back(k + '0');
+				ret.push_back(up + '0');
+			}
+			else
+			{
+				ret.pop_back();
+				ret.push_back(k + '0');
+			}
+		}
+		else
+		{
+			if(up >= 1)
+			{
+				ret.push_back(k + '0');
+				ret.push_back(up + '0');
+			}
+			else ret.push_back(k + '0');
+		}
+		
+		
+	}
+	// ret[i] - '0' + (s%10)가 -46이 나온다. 0 - 48 + 1의 결과. 초기화된 ret에 "" 즉 숫자 0이 들어있어서 -46이 값으로 나온 것이다.
+	return ret;
+}
+
+int main()
+{
+	string ret;
+	int n;
+	//string a = "32";
+	//a.push_back((a[0] - '0' + 3) + '0');
+	//cout << a;
+	//for(int i=0; i<10; i++){
+	//	string a = cache[i];
+	//	cout << a<< endl;
+	//}
+
+	
+	while(1)
+	{
+		cin >> n;
+		if(cin.eof() == true) break;
+		ret = tiling(n);
+		reverse(ret.begin(), ret.end());
+		cout << ret << endl;
+	}
+}
+//tower of flower

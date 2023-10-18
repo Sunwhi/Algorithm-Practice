@@ -1,0 +1,86 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+
+string pls(string& a, string& b)
+{
+	string ret;
+	int size;
+	size = a.size() > b.size() ? a.size() : b.size();
+	
+	for(int i=0; i<size; i++)
+	{
+		int s; //자릿수 합
+		int as, bs;
+		if(i>=a.size()) as = 0; // if(a[i] == 0)
+		else as = a[i]-'0';
+		if(i>=b.size()) bs = 0;
+		else bs = b[i]-'0';
+		//cout << as << " " << bs << endl;
+		s = as + bs; //(a[i]-'0') + (b[i]-'0') + (c[i]-'0'); a[i],b[],c[]가 ""일때를 생각못함.
+
+		
+		
+		if(ret[i] != 0) //앞에서 반올림된 값이 있을 때
+		{
+			
+			s += ret[i] - '0';
+			int f = s%10; // 일의 자릿수
+			int up = s/10; // 십의 자릿수
+			
+			if(up>=1)
+			{
+				ret.pop_back();
+				ret.push_back(f + '0');
+				ret.push_back(up + '0');
+			}
+			else
+			{
+				ret.pop_back();
+				ret.push_back(f + '0');
+			}
+		}
+		else
+		{
+			int f = s%10; // 일의 자릿수
+			int up = s/10; // 십의 자릿수
+			
+			if(up >= 1)
+			{
+				ret.push_back(f + '0');
+				ret.push_back(up + '0');
+			}
+			else ret.push_back(f + '0');
+		}
+		
+		
+	}
+
+	return ret;
+}
+
+int main()
+{
+	string a,b;
+	string ret;
+	
+	cin >> a >> b;
+	
+	reverse(a.begin() , a.end());
+	reverse(b.begin() , b.end());
+			
+	ret = pls(a,b);
+	
+	reverse(ret.begin(),ret.end());
+		
+	cout << ret << endl;
+
+	return 0;
+}
+//7 294 오류 -> 문자열의 끝에 \0이 들어가고 이 범위를 넘어버리면 쓰레기 값이 나온다. 따라서 7에서 i로 idx 2를 접근하면 쓰레기 값.

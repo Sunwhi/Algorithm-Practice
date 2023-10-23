@@ -1,0 +1,44 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+double cache[2001][1001];
+int n,m;
+
+double snail(int dis, int day)
+{
+	if(day == m)
+	{
+		if(dis >= n) return 1;
+		else return 0;
+	}
+	double &ret = cache[dis][day];
+	if(ret != -1.0) return ret;
+	
+	ret = (0.75 * snail(dis+2,day+1)) + (0.25 * snail(dis+1,day+1));
+	
+	return ret;
+}
+
+int main()
+{
+	int c;
+	double ret;
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{
+		cin >> n >> m;
+		
+		fill(cache[0], cache[1000], -1.0);
+		
+		ret = snail(0,0);
+		printf("%.10f\n", ret);
+	}
+	
+}

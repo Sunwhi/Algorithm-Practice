@@ -1,0 +1,108 @@
+// 방법 1
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+int cache[101];
+int cache2[101];
+const int MAX = 1000000007;
+int n;
+
+int tiling(int n)
+{
+	if(n<=1) return 1;
+	
+	int &ret = cache[n];
+	if(ret != -1) return ret;
+	
+	ret = ( tiling(n-1) % MAX + tiling(n-2) % MAX )%MAX; // 마지막에 MAX로 모듈러연산 해야 됨.
+	
+	return ret;
+}
+
+int distributeTiling(int n)
+{
+	//c1,c2는 왼쪽에 1(2) 오른쪽에 2(1)
+	//c3,c4는 각각 1 1 / 2 2
+	int& ret = cache2[n];
+	if(ret != -1) return ret;
+	
+	int c1,c2,c3,c4;
+	// 아래의 리턴값들은 c3,c4를 위한 것
+	//if(n==4) return 2;
+	//if(n==3) return 2;
+	if(n<=2) return 0;
+	
+	c1 = tiling(n-3)%MAX;
+	c2 = tiling(n-3)%MAX;
+	c3 = distributeTiling(n-2)%MAX;
+	c4 = distributeTiling(n-4)%MAX;
+	//ret = tiling(n-3);
+	//ret = (ret + tiling(n-3))%MAX;
+	//ret = (ret + distributeTiling(n-2))%MAX;
+	//ret = (ret + distributeTiling(n-4))%MAX;
+	
+	ret = (((c1+c2)%MAX+c3)%MAX+c4)%MAX; // c1과 c2를 더했을때 표현범위를 넘어갈 수 잇다.
+	
+	return ret;
+}
+
+int main()
+{
+	int c;
+	
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{
+		int ret = 0;
+		
+		cin >> n;
+		
+		memset(cache,-1,sizeof(cache));
+		memset(cache2,-1,sizeof(cache2));
+		
+		ret = distributeTiling(n);
+		
+		cout << ret << endl;
+	}
+	
+}
+//전체에서 대칭인 개수를 빼는 방법으로 풀면 %연산을 하기 때문에 tiling(n)보다 tiling(n/2)가 커지는 경우가 나온다.
+//예를 들어 tiling(n)과 tiling(n/2) 사이의 max 값으로 나머지를 구하게 될 때 tiling(n)값은 나눠지고 tinling(n/2)값은 나눠지지 않아 더 큰 값이 나오는 경우
+/*
+int distributeTiling(int n)
+{
+	//c1,c2는 왼쪽에 1(2) 오른쪽에 2(1)
+	//c3,c4는 각각 1 1 / 2 2
+	int ret;
+	int c1,c2;
+	int& c3 = cache2[n-2];
+	int& c4 = cache2[n-4];
+	// 아래의 리턴값들은 c3,c4를 위한 것
+	if(n==4) return 2;
+	if(n==3) return 2;
+	if(n<=2) return 0;
+	
+	c1 = tiling(n-3);
+	c2 = tiling(n-3);
+	
+	if(c3 == -1)
+	{
+		c3 = distributeTiling(n-2);
+	}
+	if(c4 == -1)
+	{
+		c4 = distributeTiling(n-4);
+	}
+	
+	ret = (c1%MAX + c2%MAX + c3%MAX + c4%MAX)%MAX;
+	
+	return ret;
+}
+*/

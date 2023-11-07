@@ -106,3 +106,58 @@ int distributeTiling(int n)
 	return ret;
 }
 */
+
+// 방법 2 (대칭 개수 빼기)
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cmath>
+#include <string.h>
+#include <array>
+
+using namespace std;
+int cache[101];
+int cache2[101];
+const int MAX = 1000000007;
+int n;
+
+int tiling(int n)
+{
+	if(n<=1) return 1;
+	
+	int &ret = cache[n];
+	if(ret != -1) return ret;
+	
+	ret = ( tiling(n-1) % MAX + tiling(n-2) % MAX )%MAX; // 마지막에 MAX로 모듈러연산 해야 됨.
+	
+	return ret;
+}
+
+int symmetryTiling(int n)
+{
+	return 0;
+}
+
+int main()
+{
+	int c;
+	
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{
+		int ret = 0;
+		
+		cin >> n;
+		
+		memset(cache,-1,sizeof(cache));
+		
+		ret = (tiling(n)%MAX + MAX - (tiling(n/2) + tiling(n/2-1))%MAX);
+		if(n<=2) ret = 0;
+		if(n==3) ret = 2;
+		if(n==4) ret = 2;
+		cout << ret << endl;
+	}
+	
+}

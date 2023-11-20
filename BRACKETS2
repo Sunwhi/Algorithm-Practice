@@ -1,0 +1,81 @@
+<내 풀이>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <list>
+#include <queue>
+#include <stack>
+
+using namespace std;
+
+string yesNo(stack<char>& brackets)
+{
+	stack<char> single;
+	
+	while(!brackets.empty())
+	{
+		
+		if(brackets.top() == '(')
+		{
+			if(single.empty()) return "NO";
+			
+			if(single.top() == ')') single.pop();
+			else return "NO";
+		}
+		else if(brackets.top() == '{')
+		{
+			if(single.empty()) return "NO";
+			
+			if(single.top() == '}') single.pop();
+			else return "NO";
+		}
+		else if(brackets.top() == '[')
+		{
+			if(single.empty()) return "NO";
+			
+			if(single.top() == ']') single.pop();
+			else return "NO";
+		}
+		else single.push(brackets.top());
+		
+		brackets.pop();
+	}
+	
+	if(single.empty()) return "YES";
+	else return "NO";
+}
+
+int main()
+{
+	int c;
+	
+	cin >> c;
+	
+	for(int i=0; i<c; i++)
+	{
+		stack<char> brackets;
+		string bra;
+		cin >> bra;
+		
+		for(int i=0; i<bra.length(); i++)
+		{
+			brackets.push(bra[i]);
+		}
+		
+		string ret = yesNo(brackets);
+		cout << ret << endl;
+		
+	}
+	
+}
+// 이거 왜 안됨(bra는 char형임)
+/*while(true)
+		{
+			cin >> bra;
+			if(cin.eof()) break;
+			brackets.push(bra);
+		}*/
+		/*while(cin >> bra)
+		{
+			brackets.push(bra);
+		}*/
